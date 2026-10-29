@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f5f0">
+  <title>{{ "Log in" if mode == "login" else "Create account" }} | Pedal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script src="{{ url_for('static', filename='auth.js') }}" defer></script>
+</head>
+<body class="auth-page">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Pedal home"><span class="brand-mark">p</span> pedal<span class="brand-period">.</span></a>
+    <a class="header-cta" href="/">Back to the bikes <span aria-hidden="true">↗</span></a>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card">
+      <a class="auth-back" href="/">← Back to home</a>
+      <p class="eyebrow">{{ "WELCOME BACK" if mode == "login" else "JOIN THE RIDE" }}</p>
+      <h1>{{ "Good to see you." if mode == "login" else "Let's get rolling." }}</h1>
+      <p class="auth-intro">{{ "Log in to your Pedal account." if mode == "login" else "Create an account to make your next ride yours." }}</p>
+      <form id="auth-form" data-mode="{{ mode }}">
+        <label>Account type
+          <select name="account_type" id="account-type">
+            <option value="customer" {{ "" if account_type|default("customer") == "customer" else "selected" }}>Customer</option>
+            <option value="admin" {{ "selected" if account_type|default("customer") == "admin" else "" }}>Admin</option>
+          </select>
+        </label>
+        {% if mode == "signup" %}
+        <label>Full name<input name="full_name" autocomplete="name" required maxlength="120" placeholder="Alex Morgan"></label>
+        {% endif %}
+        <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254" placeholder="alex@example.com"></label>
+        {% if mode == "signup" %}
+        <label>Phone number<input name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="+1 (555) 000-0000"></label>
+        {% endif %}
+        <label>Password<input name="password" type="password" autocomplete="{{ 'current-password' if mode == 'login' else 'new-password' }}" required minlength="{{ 1 if mode == 'login' else 8 }}" maxlength="128" placeholder="{{ 'Your password' if mode == 'login' else 'At least 8 characters' }}"></label>
+        <button class="button button-dark auth-submit" type="submit">{{ "Log in" if mode == "login" else "Create account" }} <span aria-hidden="true">↗</span></button>
+        <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+      </form>
+      <p class="auth-switch">{{ "New to Pedal?" if mode == "login" else "Already have an account?" }} <a href="{{ '/signup' if mode == 'login' else '/login' }}">{{ "Create an account" if mode == "login" else "Log in" }}</a></p>
+      <p class="auth-switch">Admin? <a href="{{ '/admin/signup' if mode == 'signup' else '/admin/login' }}">{{ "Create an admin account" if mode == "signup" else "Use admin login" }}</a></p>
+    </section>
+    <aside class="auth-aside">
+      <img src="https://images.unsplash.com/photo-1511994298241-608e28f14fde?auto=format&fit=crop&w=1200&q=85" alt="Riding a bike along a sunny path">
+      <div><span class="tag-icon">✳</span><p><strong>Your next favorite day</strong><br>is just around the corner.</p></div>
+    </aside>
+  </main>
+</body>
+</html>

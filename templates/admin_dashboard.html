@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedal | Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+            color: #183b2b;
+        }
+
+        header {
+            background: #174d35;
+            color: white;
+            padding: 18px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        header form {
+            margin: 0;
+        }
+
+        header button {
+            background: white;
+            color: #174d35;
+            border: 0;
+            padding: 10px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 18px;
+        }
+
+        h2 {
+            margin-top: 32px;
+            border-bottom: 2px solid #dce8df;
+            padding-bottom: 10px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+        }
+
+        .card, .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #183b2b0c;
+        }
+
+        .card p {
+            color: #69786f;
+            margin: 0 0 12px;
+        }
+
+        .card strong {
+            font-size: 30px;
+        }
+
+        .messages {
+            background: #e5f4e9;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .messages p {
+            margin: 5px 0;
+        }
+
+        .error {
+            color: #a32222;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #cbd7ce;
+            border-radius: 7px;
+            font: inherit;
+            background: white;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        button, .button {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 14px;
+            background: #176b45;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-button {
+            margin-top: 18px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            margin-top: 14px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 650px;
+        }
+
+        th, td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e4ebe6;
+            vertical-align: top;
+        }
+
+        th {
+            background: #e8f1eb;
+        }
+
+        td form {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        td select {
+            min-width: 130px;
+        }
+
+        .muted {
+            color: #69786f;
+        }
+
+        footer {
+            text-align: center;
+            color: #69786f;
+            padding: 28px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Pedal Admin Dashboard</h1>
+
+        <form action="/admin/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+    </header>
+
+    <main>
+        <h2>Dashboard Overview</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="messages">
+                    {% for category, message in messages %}
+                        <p class="{{ 'error' if category == 'error' else '' }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="cards">
+            <div class="card">
+                <p>Total Bikes</p>
+                <strong>{{ total_bikes }}</strong>
+            </div>
+
+            <div class="card">
+                <p>Total Customers</p>
+                <strong>{{ total_customers }}</strong>
+            </div>
+
+            <div class="card">
+                <p>Total Bookings</p>
+                <strong>{{ total_bookings }}</strong>
+            </div>
+        </section>
+
+        <h2>Add New Bike</h2>
+
+        <section class="panel">
+            <form action="/admin/bikes/add" method="POST">
+                <div class="form-grid">
+                    <div>
+                        <label for="name">Bike Name *</label>
+                        <input id="name" name="name" required
+                               placeholder="e.g. Mountain Bike">
+                    </div>
+
+                    <div>
+                        <label for="category">Category *</label>
+                        <input id="category" name="category" required
+                               placeholder="e.g. Mountain, Road, Electric">
+                    </div>
+
+                    <div>
+                        <label for="hourly_rate">Hourly Rate *</label>
+                        <input id="hourly_rate" name="hourly_rate"
+                               type="number" min="0" step="0.01" required
+                               placeholder="e.g. 100">
+                    </div>
+
+                    <div>
+                        <label for="image_url">Image URL</label>
+                        <input id="image_url" name="image_url" type="url"
+                               placeholder="https://example.com/bike.jpg">
+                    </div>
+                </div>
+
+                <p>
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description"
+                              placeholder="Bike details..."></textarea>
+                </p>
+
+                <button class="add-button" type="submit">Add Bike</button>
+            </form>
+        </section>
+
+        <h2>Manage Bikes</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Bike Name</th>
+                        <th>Category</th>
+                        <th>Hourly Rate</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for bike in bikes %}
+                    <tr>
+                        <td>{{ bike.bike_id }}</td>
+                        <td>{{ bike.name }}</td>
+                        <td>{{ bike.category }}</td>
+                        <td>₹{{ "%.2f"|format(bike.hourly_rate or 0) }}</td>
+                        <td>{{ bike.status }}</td>
+                        <td>
+                            <form
+                                action="/admin/bikes/{{ bike.bike_id }}/status"
+                                method="POST">
+
+                                <select name="status" required>
+                                    <option value="available"
+                                        {% if bike.status == 'available' %}selected{% endif %}>
+                                        Available
+                                    </option>
+
+                                    <option value="unavailable"
+                                        {% if bike.status == 'unavailable' %}selected{% endif %}>
+                                        Unavailable
+                                    </option>
+
+                                    <option value="maintenance"
+                                        {% if bike.status == 'maintenance' %}selected{% endif %}>
+                                        Maintenance
+                                    </option>
+                                </select>
+
+                                <button type="submit">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6">No bikes found. Add your first bike above.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Customers</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>{{ customer.customer_id }}</td>
+                        <td>{{ customer.full_name }}</td>
+                        <td>{{ customer.email }}</td>
+                        <td>{{ customer.phone or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4">No customers registered yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h2>Bookings</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Bike</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.rental_id }}</td>
+                        <td>{{ booking.customer_name }}</td>
+                        <td>{{ booking.customer_email }}</td>
+                        <td>{{ booking.customer_phone or '-' }}</td>
+                        <td>{{ booking.bike_name }}</td>
+                        <td>{{ booking.start_time or '-' }}</td>
+                        <td>{{ booking.end_time or '-' }}</td>
+                        <td>{{ booking.status }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8">No bookings found yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        Pedal Bike Rental — Admin Panel
+    </footer>
+</body>
+</html>
